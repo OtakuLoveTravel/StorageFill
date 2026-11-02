@@ -44,7 +44,7 @@ StorageFill/
 1. 下载安装 [Sideloadly](https://sideloadly.io)（需要先装 iTunes 的驱动包，官网有说明）。
 2. iPhone 用数据线连电脑，打开 Sideloadly：
    - 拖入 `StorageFill.ipa`；
-   - Apple ID 填你的 iCloud 账号；
+   - Apple ID 填你的 iCloud 账号；注意手机号码，可能需要在前面加上 +86
    - 点 Start，等它自动重签并安装。
    - 开了双重认证的话，密码栏填「应用专用密码」（appleid.apple.com → 登录与安全 → App 专用密码）。
 3. 手机上信任证书 + 打开开发者模式（同方案 A 第 4、5 步）。
