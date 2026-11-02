@@ -1,0 +1,55 @@
+name: Build unsigned IPA
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: 定位工程文件
+        id: locate
+        run: |
+          PROJ=$(find . -name "*.xcodeproj" -maxdepth 5 -not -path "*/.*" | head -1)
+          if [ -z "$PROJ" ]; then
+            echo "::error::仓库里找不到 .xcodeproj，检查文件是否上传完整"
+            exit 1
+          fi
+          echo "proj=$PROJ"
+          echo "proj_dir=$(dirname "$PROJ")" >> $GITHUB_OUTPUT
+          echo "proj_name=$(basename "$PROJ" .xcodeproj)" >> $GITHUB_OUTPUT
+
+      - name: 编译（未签名）
+        working-directory: ${{ steps.locate.outputs.proj_dir }}
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project "${{ steps.locate.outputs.proj_name }}.xcodeproj" \
+            -target "${{ steps.locate.outputs.proj_name }}" \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath "$RUNNER_TEMP/dd" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: 打包 IPA
+        run: |
+          APP=$(find "$RUNNER_TEMP/dd/Build/Products" -maxdepth 2 -name "*.app" -type d | head -1)
+          echo "App: $APP"
+          mkdir -p Payload
+          cp -R "$APP" Payload/
+          zip -qr StorageFill.ipa Payload
+          unzip -l StorageFill.ipa
+
+      - name: 上传产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: StorageFill-ipa
+          path: StorageFill.ipa
+          if-no-files-found: error
