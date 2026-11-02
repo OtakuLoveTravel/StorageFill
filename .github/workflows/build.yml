@@ -26,13 +26,12 @@ jobs:
       - name: 编译（未签名）
         working-directory: ${{ steps.locate.outputs.proj_dir }}
         run: |
-          set -o pipefail
           xcodebuild \
             -project "${{ steps.locate.outputs.proj_name }}.xcodeproj" \
             -target "${{ steps.locate.outputs.proj_name }}" \
             -configuration Release \
             -sdk iphoneos \
-            -derivedDataPath "$RUNNER_TEMP/dd" \
+            SYMROOT="$RUNNER_TEMP/out" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
@@ -40,7 +39,12 @@ jobs:
 
       - name: 打包 IPA
         run: |
-          APP=$(find "$RUNNER_TEMP/dd/Build/Products" -maxdepth 2 -name "*.app" -type d | head -1)
+          APP=$(find "$RUNNER_TEMP/out" -maxdepth 2 -name "*.app" -type d | head -1)
+          if [ -z "$APP" ]; then
+            echo "::error::编译产物里没有 .app"
+            find "$RUNNER_TEMP/out" -maxdepth 3 || true
+            exit 1
+          fi
           echo "App: $APP"
           mkdir -p Payload
           cp -R "$APP" Payload/
