@@ -32,14 +32,12 @@ StorageFill/
 4. 手机上：**设置 → 隐私与安全性 → 开发者模式 → 打开**（iOS 16+，需重启生效）。
 5. Xcode 按 `⌘R` 运行。首次安装如果报 `Untrusted Developer`，去手机 **设置 → 通用 → VPN与设备管理** 里信任你的证书。
 
-## 方案 B：只有 Windows —— GitHub 云端构建 + 侧载
+## 方案 B：只有 Windows —— GitHub 云端构建 + 侧载 
 
-### 第 1 步：云端拿到 ipa
+### 第 1 步：云端拿到 ipa   已打包直接下载就好
 
-1. 注册/登录 [github.com](https://github.com)，新建一个仓库（Public 免费且 Actions 无限额度）。
-2. 把 `StorageFill` 整个文件夹上传（网页端拖拽上传，注意 `.github` 隐藏文件夹也要传，网页端可以直接把文件夹拖进上传框）。
-3. 仓库页 → **Actions** 标签 → 左侧 `Build unsigned IPA` → **Run workflow** 手动触发。
-4. 等 3~5 分钟，该次运行页面底部的 **Artifacts** 里下载 `StorageFill-ipa`，解压得到 `StorageFill.ipa`。
+1. 仓库页 → **Actions** 标签 → 左侧 `Build unsigned IPA` → **Run workflow** 手动触发。
+2. 等 3~5 分钟，该次运行页面底部的 **Artifacts** 里下载 `StorageFill-ipa`，解压得到 `StorageFill.ipa`。
 
 ### 第 2 步：侧载安装到 iPhone（Windows 上用 Sideloadly）
 
